@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "openthemes",
+  "description": "Extract CSS theme variables from any website",
   "private": true,
   "version": "0.0.0",
   "type": "module",
