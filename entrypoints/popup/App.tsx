@@ -60,19 +60,19 @@ function App() {
 
   if (cssOutput) {
     return (
-      <div className="container">
-        <div className="header">
-          <h1>Theme Variables</h1>
+      <div className="w-[380px] p-4 font-sans">
+        <div className="mb-4">
+          <h1 className="m-0 mb-1 text-lg font-semibold">Theme Variables</h1>
         </div>
-        <pre className="css-preview">{cssOutput}</pre>
-        <div className="actions">
-          <button onClick={copyToClipboard} className="btn btn-primary">
+        <pre className="m-0 mb-4 p-3 bg-slate-800 text-slate-200 rounded-md font-mono text-[11px] leading-relaxed max-h-[300px] overflow-auto whitespace-pre-wrap break-all">{cssOutput}</pre>
+        <div className="flex gap-2">
+          <button onClick={copyToClipboard} className="px-4 py-2 bg-slate-900 text-white rounded-md text-sm font-medium hover:opacity-90 transition-opacity border-none cursor-pointer">
             {copied ? "Copied!" : "Copy"}
           </button>
-          <button onClick={downloadFile} className="btn btn-secondary">
+          <button onClick={downloadFile} className="px-4 py-2 bg-slate-200 text-slate-900 rounded-md text-sm font-medium hover:opacity-90 transition-opacity border-none cursor-pointer">
             Download
           </button>
-          <button onClick={goBack} className="btn btn-ghost">
+          <button onClick={goBack} className="px-4 py-2 bg-transparent text-slate-500 rounded-md text-sm font-medium hover:opacity-90 transition-opacity border-none cursor-pointer">
             Back
           </button>
         </div>
@@ -81,18 +81,18 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>OpenThemes</h1>
-        <p>Extract CSS theme variables from any website</p>
+    <div className="w-[380px] p-4 font-sans">
+      <div className="mb-4">
+        <h1 className="m-0 mb-1 text-lg font-semibold">OpenThemes</h1>
+        <p className="m-0 text-[13px] text-slate-600">Extract CSS theme variables from any website</p>
       </div>
-      <button onClick={extractTheme} disabled={loading} className="btn btn-primary btn-large">
+      <button onClick={extractTheme} disabled={loading} className="w-full px-4 py-3 bg-slate-900 text-white rounded-md text-sm font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity border-none cursor-pointer">
         {loading ? "Extracting..." : "Extract Theme"}
       </button>
       {logs.length > 0 && (
-        <div className="logs">
+        <div className="mt-4 p-3 bg-slate-50 rounded-md text-xs">
           {logs.map((log, i) => (
-            <div key={i} className="log-item">
+            <div key={i} className="py-1 text-slate-600 not-last:border-b not-last:border-slate-200">
               {log}
             </div>
           ))}
