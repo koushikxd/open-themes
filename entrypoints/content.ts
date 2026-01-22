@@ -24,6 +24,10 @@ export default defineContentScript({
         extractTheme().then(sendResponse);
         return true;
       }
+      if (message.action === "check_site_info") {
+        checkSiteInfo().then(sendResponse);
+        return true;
+      }
     });
   },
 });
@@ -58,6 +62,71 @@ function extractComputedVariables(): { light: Map<string, string>; dark: Map<str
   }
 
   return { light, dark };
+}
+
+function detectTailwind(): boolean {
+  const html = document.documentElement.outerHTML;
+  const scripts = Array.from(document.querySelectorAll("script"));
+  const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+  
+  if (scripts.some(s => s.src.includes("tailwind") || s.textContent?.includes("tailwind"))) {
+    return true;
+  }
+  
+  if (links.some(l => (l as HTMLLinkElement).href.includes("tailwind"))) {
+    return true;
+  }
+  
+  const bodyClasses = document.body.className;
+  const tailwindUtilities = [
+    /\bflex\b/, /\bgrid\b/, /\bhidden\b/, /\bblock\b/,
+    /\bp-\d/, /\bm-\d/, /\bw-\d/, /\bh-\d/,
+    /\btext-\w+/, /\bbg-\w+/, /\bborder-\w+/,
+    /\brounded/, /\bshadow/, /\bhover:/
+  ];
+  
+  const allElements = document.querySelectorAll("*");
+  let tailwindClassCount = 0;
+  
+  for (let i = 0; i < Math.min(allElements.length, 100); i++) {
+    const el = allElements[i];
+    const classes = el.className;
+    if (typeof classes === "string") {
+      for (const pattern of tailwindUtilities) {
+        if (pattern.test(classes)) {
+          tailwindClassCount++;
+          if (tailwindClassCount >= 5) return true;
+        }
+      }
+    }
+  }
+  
+  return false;
+}
+
+async function checkSiteInfo() {
+  const hasTailwind = detectTailwind();
+  
+  const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  let themeVarCount = 0;
+  
+  for (let i = 0; i < styles.length; i++) {
+    const name = styles[i];
+    if (THEME_VARIABLES.has(name)) {
+      themeVarCount++;
+    }
+  }
+  
+  const canExtract = hasTailwind && themeVarCount > 0;
+  
+  return {
+    hasTailwind,
+    canExtract,
+    stats: {
+      themeVarCount,
+    }
+  };
 }
 
 async function extractTheme() {
